@@ -18,3 +18,43 @@ and  a.CAR_TYPE IN ('세단', 'SUV')
 group by a.CAR_ID
 having FEE>=500000 AND FEE<2000000
 ORDER BY FEE DESC, CAR_TYPE, CAR_ID DESC
+
+
+# ------------------------------------------------------------------------------------------------------------------------
+
+
+SELECT
+    a.CAR_ID,
+    a.CAR_TYPE,
+    ROUND(a.DAILY_FEE * 30 * (100 - b.DISCOUNT_RATE) / 100, 0) AS FEE
+FROM
+    CAR_RENTAL_COMPANY_CAR AS a
+JOIN
+    CAR_RENTAL_COMPANY_DISCOUNT_PLAN AS b
+ON
+    a.CAR_TYPE = b.CAR_TYPE
+WHERE
+    a.CAR_ID NOT IN (
+        SELECT 
+            CAR_ID
+        FROM
+            CAR_RENTAL_COMPANY_RENTAL_HISTORY
+        WHERE 
+            END_DATE >= '2022-11-01'
+        AND
+            START_DATE < '2022-12-01'
+    )
+AND
+    (
+        a.CAR_TYPE IN ('세단', 'SUV')
+    )
+AND
+    b.DURATION_TYPE = '30일 이상'
+GROUP BY
+    a.CAR_ID
+HAVING
+    FEE BETWEEN 500000 AND 1999999
+ORDER BY
+    FEE DESC,
+    CAR_TYPE ASC,
+    CAR_ID DESC
