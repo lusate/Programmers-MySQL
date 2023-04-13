@@ -1,3 +1,29 @@
+SELECT HISTORY_ID, 
+    round(DAILY_FEE * (DATEDIFF(h.END_DATE,h.START_DATE)+1)
+    * (case 
+    when DATEDIFF(END_DATE,START_DATE)+1 < 7 then 1
+    when DATEDIFF(END_DATE,START_DATE)+1 < 30 then 0.95
+    when DATEDIFF(END_DATE,START_DATE)+1 < 90 then 0.92
+    else 0.85 end)) as "FEE"
+    -- 트럭이 조건이므로 트럭일 때 할인율만 알아내면 된다.
+    -- 7일 이상일 때 5%, 
+
+from CAR_RENTAL_COMPANY_CAR as c 
+    join CAR_RENTAL_COMPANY_RENTAL_HISTORY as h
+    on c.CAR_ID = h.CAR_ID
+    join CAR_RENTAL_COMPANY_DISCOUNT_PLAN as p
+    on c.CAR_TYPE = p.CAR_TYPE
+
+where c.car_type = "트럭"
+
+group by HISTORY_ID
+
+order by FEE desc , HISTORY_ID desc
+
+
+-- ////////////////////////////////////////////////////////////////////////////////////////
+
+
 -- WITH ~ AS () : 새로운 가상 테이블을 만듦.
 WITH RENT_INFO AS (
     SELECT HISTORY_ID, DATEDIFF(END_DATE, START_DATE) + 1 AS RENT_DAYS, DAILY_FEE, CAR_TYPE,
