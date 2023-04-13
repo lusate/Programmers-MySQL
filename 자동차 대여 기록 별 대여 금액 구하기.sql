@@ -1,24 +1,22 @@
 SELECT HISTORY_ID, 
-    round(DAILY_FEE * (DATEDIFF(h.END_DATE,h.START_DATE)+1)
-    * (case 
-    when DATEDIFF(END_DATE,START_DATE)+1 < 7 then 1
-    when DATEDIFF(END_DATE,START_DATE)+1 < 30 then 0.95
-    when DATEDIFF(END_DATE,START_DATE)+1 < 90 then 0.92
-    else 0.85 end)) as "FEE"
+    round(DAILY_FEE * (DATEDIFF(B.END_DATE,B.START_DATE)+1)
+    * (CASE 
+    WHEN DATEDIFF(END_DATE,START_DATE)+1 < 7 THEN 1
+    WHEN DATEDIFF(END_DATE,START_DATE)+1 < 30 THEN 0.95
+    WHEN DATEDIFF(END_DATE,START_DATE)+1 < 90 THEN 0.92
+    ELSE 0.85 END)) AS FEE
     -- 트럭이 조건이므로 트럭일 때 할인율만 알아내면 된다.
     -- 7일 이상일 때 5%, 
+     
+FROM CAR_RENTAL_COMPANY_CAR AS A
+JOIN CAR_RENTAL_COMPANY_RENTAL_HISTORY AS B
+ON A.CAR_ID = B.CAR_ID
+JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN AS C
+ON A.CAR_TYPE = C.CAR_TYPE
 
-from CAR_RENTAL_COMPANY_CAR as c 
-    join CAR_RENTAL_COMPANY_RENTAL_HISTORY as h
-    on c.CAR_ID = h.CAR_ID
-    join CAR_RENTAL_COMPANY_DISCOUNT_PLAN as p
-    on c.CAR_TYPE = p.CAR_TYPE
-
-where c.car_type = "트럭"
-
-group by HISTORY_ID
-
-order by FEE desc , HISTORY_ID desc
+WHERE A.CAR_TYPE = '트럭'
+GROUP BY HISTORY_ID
+ORDER BY FEE DESC, HISTORY_ID DESC
 
 
 -- ////////////////////////////////////////////////////////////////////////////////////////
