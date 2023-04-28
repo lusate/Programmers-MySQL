@@ -7,5 +7,6 @@ ON A.BOOK_ID = C.BOOK_ID
 
 WHERE C.SALES_DATE LIKE '2022-01%'
 GROUP BY B.AUTHOR_ID, A.CATEGORY, B.AUTHOR_NAME
--- GROUP BY는 SELECT에 있는 컬럼을 묶는다고 생각
+-- GROUP BY는 SELECT에 있는 컬럼을 묶는다고 생각. 문제에서 ~~별 이라 나오면 GROUP을 사용해야 한다고 생각.
+-- SUM과 같은 계산식이 나오면 GROUP 필요.
 ORDER BY B.AUTHOR_ID ASC, A.CATEGORY DESC
